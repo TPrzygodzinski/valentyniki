@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Czy zostaniesz moją walentynką?</title>
+
+<style>
+:root{
+  --pink1:#ff9a9e;
+  --pink2:#fad0c4;
+  --pink3:#ffd1dc;
+  --card:#ffffffdd;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --yes:#22c55e;
+  --no:#ef4444;
+  --btn:#111827;
+  --btn2:#334155;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: system-ui, sans-serif;
+  color:var(--text);
+
+  background: linear-gradient(-45deg, var(--pink1), var(--pink2), var(--pink3), #ffc3d8);
+  background-size:400% 400%;
+  animation:bg 12s ease infinite;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  padding:16px;
+}
+
+@keyframes bg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.floating-heart{
+  position:absolute;
+  bottom:-30px;
+  font-size:18px;
+  opacity:.75;
+  animation: floatUp linear infinite;
+  pointer-events:none;
+}
+@keyframes floatUp{
+  from{transform:translateY(0) scale(1);opacity:0}
+  20%{opacity:.8}
+  to{transform:translateY(-120vh) scale(1.4);opacity:0}
+}
+
+.card{
+  width:min(560px,95vw);
+  background:var(--card);
+  border-radius:24px;
+  padding:22px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  position:relative;
+  z-index:5;
+  overflow:hidden;
+}
+
+.panel{
+  display:none;
+  opacity:0;
+  transform: translateY(10px);
+}
+.panel.show{
+  display:block;
+  animation: panelIn .28s ease forwards;
+}
+@keyframes panelIn{
+  to{ opacity:1; transform: translateY(0); }
+}
+
+h1,h2{margin:0 0 10px}
+
+.subtitle{
+  margin:0 0 15px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.buttons{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+button{
+  border:0;
+  border-radius:999px;
+  padding:14px 18px;
+  font-weight:800;
+  font-size:16px;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(0,0,0,.2);
+  transition:.2s;
+}
+button:hover{ transform:scale(1.05); }
+
+#yesBtn{background:var(--yes);color:#fff}
+#noBtn{background:var(--no);color:#fff}
+
+.choices{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.choiceBtn{
+  width:100%;
+  background:var(--btn);
+  color:#fff;
+  border-radius:16px;
+  padding:14px;
+  text-align:left;
+  font-weight:800;
+}
+
+.choiceBtn.alt{background:var(--btn2)}
+
+.choiceBtn small{
+  display:block;
+  margin-top:4px;
+  opacity:.85;
+  font-weight:600;
+}
+
+.row{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.secondary{
+  background:#fff;
+  color:#111;
+  border:1px solid #ddd;
+  box-shadow:none;
+}
+
+.summaryBox{
+  background:#fff8;
+  border-radius:16px;
+  padding:14px;
+  margin-top:10px;
+  border:1px solid #fff;
+}
+
+.finalBox{
+  margin-top:14px;
+  background:#fff;
+  border-radius:16px;
+  padding:14px;
+  border:1px solid #eee;
+}
+.finalBox h3{margin:0 0 6px}
+
+.pop-heart{
+  position:absolute;
+  animation:pop 1.2s forwards;
+  pointer-events:none;
+}
+@keyframes pop{
+  to{transform:translateY(-120px) scale(1.4);opacity:0}
+}
+
+.bigNo{
+  font-size:22px;
+  font-weight:900;
+}
+
+@media(max-width:420px){
+  .choices{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+
+<!-- PANEL 1 -->
+<div class="panel show" id="panel1">
+  <h1>Hej ❤️</h1>
+  <p class="subtitle">Mam jedno pytanie…</p>
+  <h2>Will you be my valentine?</h2>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">Noł</button>
+  </div>
+</div>
+
+<!-- PANEL: potwierdzenie NIE -->
+<div class="panel" id="panelNoConfirm">
+  <h2>Ej… na pewno nie? 🥺</h2>
+
+  <div class="choices">
+    <button class="choiceBtn" data-next="panelSadCat">Tak 😐</button>
+    <button class="choiceBtn alt" data-next="panel1">Nie 😅</button>
+  </div>
+
+  <div class="row">
+    <button class="secondary" data-next="panel1">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL: smutny kotek (bez GIF-a) -->
+<div class="panel" id="panelSadCat">
+
+  <div style="text-align:center; font-size:64px; margin:10px 0;">
+    😿
+  </div>
+
+  <h2 style="text-align:center;">
+    Okej… 💔
+  </h2>
+
+  <div class="finalBox">
+
+    <h3>📸 Prośba</h3>
+
+    <p style="font-weight:900; font-size:16px; text-align:center;">
+      Proszę o zrobienie screena tego<br/>
+      i mi wysłanie ❤️
+    </p>
+
+    <p class="bigNo" style="margin-top:10px; text-align:center;">
+      Odpowiedź: NIE
+    </p>
+
+  </div>
+
+  <div class="row" style="justify-content:center;">
+    <button class="secondary" data-next="panel1">
+      Wróć do początku
+    </button>
+  </div>
+
+</div>
+
+<!-- PANEL 2 PLAN -->
+<div class="panel" id="panel2">
+  <h2>Na co masz ochotę?</h2>
+  <p class="subtitle">Wybierz plan</p>
+
+  <div class="choices">
+    <button class="choiceBtn" data-plan="Restauracja 🍝" data-next="panelR">Restauracja 🍝</button>
+    <button class="choiceBtn alt" data-plan="Dom 🏠" data-next="panelH">Dom 🏠</button>
+    <button class="choiceBtn alt" data-plan="Spacer 🌙" data-next="panelW">Spacer 🌙</button>
+    <button class="choiceBtn" data-plan="Niespodzianka 🎁" data-next="panelS">Niespodzianka 🎁</button>
+  </div>
+
+  <div class="row">
+    <button class="secondary" data-next="panel1">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL R -->
+<div class="panel" id="panelR">
+  <h2>Jaki styl restauracji?</h2>
+  <div class="choices">
+    <button class="choiceBtn" data-detail="Włoska 🍕" data-next="panelDay">Włoska 🍕</button>
+    <button class="choiceBtn alt" data-detail="Sushi 🍣" data-next="panelDay">Sushi 🍣</button>
+    <button class="choiceBtn alt" data-detail="Comfort 🍔" data-next="panelDay">Comfort 🍔</button>
+    <button class="choiceBtn" data-detail="Niespodzianka ✨" data-next="panelDay">Niespodzianka ✨</button>
+  </div>
+  <div class="row">
+    <button class="secondary" data-next="panel2">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL H -->
+<div class="panel" id="panelH">
+  <h2>Co robimy w domu?</h2>
+  <div class="choices">
+    <button class="choiceBtn" data-detail="Film 🎬" data-next="panelDay">Film 🎬</button>
+    <button class="choiceBtn alt" data-detail="Wspólne gotowanie 🍳" data-next="panelDay">Wspólne gotowanie 🍳</button>
+    <button class="choiceBtn alt" data-detail="Gry 🎲" data-next="panelDay">Gry 🎲</button>
+    <button class="choiceBtn" data-detail="Układanie lego + kubeczki 🕯️" data-next="panelDay">Układanie lego + kubeczki 🕯️</button>
+    <button class="choiceBtn alt" data-detail="Niespodzianka 🎁" data-next="panelDay">Niespodzianka 🎁</button>
+  </div>
+  <div class="row">
+    <button class="secondary" data-next="panel2">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL W -->
+<div class="panel" id="panelW">
+  <h2>Jaki spacer?</h2>
+  <div class="choices">
+    <button class="choiceBtn" data-detail="Spacer + Herbatka ☕" data-next="panelDay">Spacer + Herbatka ☕</button>
+    <button class="choiceBtn alt" data-detail="Miluś 💞" data-next="panelDay">Miluś 💞</button>
+    <button class="choiceBtn alt" data-detail="Miasto 🏙️" data-next="panelDay">Miasto 🏙️</button>
+    <button class="choiceBtn" data-detail="Citybreak 📸" data-next="panelDay">Citybreak 📸</button>
+  </div>
+  <div class="row">
+    <button class="secondary" data-next="panel2">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL S -->
+<div class="panel" id="panelS">
+  <h2>Skala niespodzianki?</h2>
+  <div class="choices">
+    <button class="choiceBtn" data-detail="Mała 🎀" data-next="panelDay">Mała 🎀</button>
+    <button class="choiceBtn alt" data-detail="Średnia 😍" data-next="panelDay">Średnia 😍</button>
+    <button class="choiceBtn alt" data-detail="Duża 🔥" data-next="panelDay">Duża 🔥</button>
+    <button class="choiceBtn" data-detail="Zaufam 😇" data-next="panelDay">Zaufam 😇</button>
+  </div>
+  <div class="row">
+    <button class="secondary" data-next="panel2">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL DAY -->
+<div class="panel" id="panelDay">
+  <h2>Kiedy?</h2>
+  <p class="subtitle">Wybierz dzień</p>
+
+  <div class="choices">
+    <button class="choiceBtn" data-day="Sobota 14.02 po pracy" data-next="panelFinalAfterWork">
+      Sobota 14.02 po pracy 💼
+    </button>
+
+    <button class="choiceBtn alt" data-day="Niedziela" data-next="panelSundayTime">
+      Niedziela 15.02 😌
+    </button>
+  </div>
+
+  <div class="row">
+    <button class="secondary" data-next="panel2">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL: GODZINA (NIEDZIELA) -->
+<div class="panel" id="panelSundayTime">
+  <h2>O której w niedzielę?</h2>
+  <p class="subtitle">Wybierz porę spotkania</p>
+
+  <div class="choices">
+    <button class="choiceBtn" data-time="Rano 10-12 ☀️" data-next="panelFinal">Rano 10-12 ☀️</button>
+    <button class="choiceBtn alt" data-time="Popołudnie 13-16 🌤️" data-next="panelFinal">Popołudnie 13-16 🌤️</button>
+    <button class="choiceBtn alt" data-time="Wieczór 17-20 🌙" data-next="panelFinal">Wieczór 17-20 🌙</button>
+    <button class="choiceBtn" data-time="Dowolnie 😌" data-next="panelFinal">Dowolnie 😌</button>
+  </div>
+
+  <div class="row">
+    <button class="secondary" data-next="panelDay">⬅️ Wróć</button>
+  </div>
+</div>
+
+<!-- PANEL FINAL -->
+<div class="panel" id="panelFinal">
+  <h2>Nasza decyzja 💘</h2>
+
+  <div class="summaryBox">
+    <p id="sumPlan">Plan:</p>
+    <p id="sumDetail">Opcja:</p>
+    <p id="sumDay">Dzień:</p>
+    <p id="sumTime">Godzina:</p>
+  </div>
+
+      <p style="font-weight:900; font-size:16px;">
+      Proszę o zrobienie screena tego<br/>
+      i mi wysłanie ❤️
+    </p>
+
+
+  <div class="row">
+    <button class="secondary" id="restart">🔁 Od nowa</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+function bgHeart(){
+  const h=document.createElement("div");
+  h.className="floating-heart";
+  const arr=["❤️","💖","💘","💕","🫶"];
+  h.textContent=arr[Math.floor(Math.random()*arr.length)];
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(14+Math.random()*20)+"px";
+  h.style.animationDuration=(6+Math.random()*6)+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),13000);
+}
+setInterval(bgHeart,450);
+
+const panels=[...document.querySelectorAll(".panel")];
+function show(id){
+  panels.forEach(p=>p.classList.remove("show"));
+  const el = document.getElementById(id);
+  if(el) el.classList.add("show");
+}
+
+const card=document.getElementById("card");
+function pop(n=20){
+  for(let i=0;i<n;i++){
+    const h=document.createElement("div");
+    h.className="pop-heart";
+    h.textContent="❤️";
+    h.style.left=(5+Math.random()*90)+"%";
+    h.style.top=(55+Math.random()*20)+"%";
+    card.appendChild(h);
+    setTimeout(()=>h.remove(),1200);
+  }
+}
+
+const state={ plan:null, detail:null, day:null, time:null };
+
+document.getElementById("yesBtn").addEventListener("click", ()=>{
+  pop(25);
+  show("panel2");
+});
+
+document.getElementById("noBtn").addEventListener("click", ()=>{
+  show("panelNoConfirm");
+});
+
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button");
+  if(!btn) return;
+
+  if(btn.dataset.plan) state.plan = btn.dataset.plan;
+  if(btn.dataset.detail) state.detail = btn.dataset.detail;
+  if(btn.dataset.day) state.day = btn.dataset.day;
+  if(btn.dataset.time) state.time = btn.dataset.time;
+
+  const next = btn.dataset.next;
+  if(!next) return;
+
+  if(next==="panelFinalAfterWork"){
+    state.time = "Po pracy 💼";
+    show("panelFinal");
+    fillSummary();
+    pop(18);
+    return;
+  }
+
+  // gdy ktoś trafi do finału bez wybrania godziny (np. kliknięcie wstecz/skip)
+  if(next==="panelFinal" && !state.time){
+    state.time = "Dowolnie 😌";
+  }
+
+  if(next==="panelFinal"){
+    show("panelFinal");
+    fillSummary();
+    pop(18);
+    return;
+  }
+
+  show(next);
+});
+
+function fillSummary(){
+  document.getElementById("sumPlan").textContent  = "Plan: "   + (state.plan ?? "");
+  document.getElementById("sumDetail").textContent= "Opcja: "  + (state.detail ?? "");
+  document.getElementById("sumDay").textContent   = "Dzień: "  + (state.day ?? "");
+  document.getElementById("sumTime").textContent  = "Godzina: "+ (state.time ?? "");
+}
+
+document.getElementById("restart").addEventListener("click", ()=>{
+  state.plan=null; state.detail=null; state.day=null; state.time=null;
+  show("panel1");
+});
+</script>
+
+</body>
+</html>
